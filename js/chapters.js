@@ -38,3 +38,13 @@ export function parseCumulative(raw) {
   }
   return chapters;
 }
+
+/** Build Chapter[] from [{title,length}] (epub detections, share links). Drops chapters under 100 chars. */
+export function chaptersFromList(list) {
+  const chapters = [];
+  for (const { title, length } of list) {
+    if (length < 100) continue;
+    chapters.push({ index: chapters.length + 1, title, length, roundedLength: Math.round(length / 100) * 100 });
+  }
+  return chapters;
+}

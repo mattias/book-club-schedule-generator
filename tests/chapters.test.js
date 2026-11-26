@@ -30,3 +30,12 @@ test("labels", () => {
   assert.equal(labelSeparator("kanji"), "　");
   assert.equal(labelSeparator("english"), " ");
 });
+
+test("chaptersFromList numbers, rounds and drops chapters under 100 chars", async () => {
+  const { chaptersFromList } = await import("../js/chapters.js");
+  const ch = chaptersFromList([{ title: "a", length: 50 }, { title: "b", length: 3640 }, { title: "c", length: 1000 }]);
+  assert.deepEqual(ch, [
+    { index: 1, title: "b", length: 3640, roundedLength: 3600 },
+    { index: 2, title: "c", length: 1000, roundedLength: 1000 },
+  ]);
+});
