@@ -203,7 +203,7 @@ export function mountEditor(app, state, { notice } = {}) {
     const pattern = h('input', { type: 'text', value: '^第.+章', 'aria-label': 'Custom chapter pattern' });
     detectHost.replaceChildren(
       h('div', { class: 'msg ok' }, info),
-      epub.detections.length ? [h('label', { for: 'detect' }, 'DETECTED BY'), sel]
+      epub.detections.length ? h('div', {}, h('label', { for: 'detect' }, 'DETECTED BY'), sel)
         : h('div', { class: 'msg error' }, 'No chapters found automatically. Try a custom pattern below, or paste a list.'),
       h('label', { for: 'pattern' }, 'OR SPLIT AT LINES MATCHING (regular expression)'),
       h('div', { class: 'row' }, Object.assign(pattern, { id: 'pattern' }), h('button', { class: 'btn small', onclick: () => {
