@@ -37,10 +37,10 @@ export async function encodeState(state) {
   return PREFIX + toB64Url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
 
-function validate(o) {
+function validate(o, allowEmpty) {
   const s = o && o.s;
   const ok = o && o.v === VERSION && typeof o.t === 'string' && (o.f === 'kanji' || o.f === 'english')
-    && Array.isArray(o.c) && o.c.length > 0
+    && Array.isArray(o.c) && (allowEmpty || o.c.length > 0)
     && o.c.every(c => Array.isArray(c) && typeof c[0] === 'string' && Number.isFinite(c[1]) && c[1] >= 0 && c[1] <= 5e6)
     && s && MODES.includes(s.mode) && DATE_RE.test(s.startDate)
     && Array.isArray(s.readingDays) && s.readingDays.length > 0
@@ -52,7 +52,7 @@ function validate(o) {
 }
 
 /** @returns {Promise<{title:string, chapters:{title:string,length:number}[], settings:object, format:string}>} */
-export async function decodeState(payload) {
+export async function decodeState(payload, { allowEmpty = false } = {}) {
   if (typeof payload !== 'string' || !payload.startsWith(PREFIX)) throw bad();
   const body = payload.slice(PREFIX.length);
   if (!/^[A-Za-z0-9_-]+$/.test(body)) throw bad();
@@ -63,7 +63,7 @@ export async function decodeState(payload) {
   } catch {
     throw bad();
   }
-  validate(obj);
+  validate(obj, allowEmpty);
   return {
     title: obj.t,
     format: obj.f,
@@ -71,3 +71,13 @@ export async function decodeState(payload) {
     chapters: obj.c.map(([title, length]) => ({ title, length })),
   };
 }
+
+/** URL hash -> which screen to show. '#edit/<payload>' restores the editor, '#<payload>' is the read-only view. */
+export function parseHash(hash) {
+  const h = hash.replace(/^#/, '');
+  if (h === '' || h === 'edit' || h === 'edit/') return { mode: 'new' };
+  if (h.startsWith('edit/')) return { mode: 'edit', payload: h.slice(5) };
+  return { mode: 'view', payload: h };
+}
+
+export const editHash = payload => '#edit/' + payload;

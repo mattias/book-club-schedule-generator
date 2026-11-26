@@ -46,3 +46,20 @@ test("review: crafted links with absurd values are rejected", async () => {
   }
   await assert.rejects(async () => decodeState(await encodeState(state([{ title: "x", length: 1e12 }]))), /bad-share-link/);
 });
+
+test("edit mode: an editor state with no chapters round-trips when allowed", async () => {
+  const s = state([]);
+  const payload = await encodeState(s);
+  await assert.rejects(() => decodeState(payload), /bad-share-link/);
+  assert.deepEqual(await decodeState(payload, { allowEmpty: true }), s);
+});
+
+test("parseHash tells new, edit and view links apart", async () => {
+  const { parseHash, editHash } = await import("../js/share.js");
+  assert.deepEqual(parseHash(""), { mode: "new" });
+  assert.deepEqual(parseHash("#"), { mode: "new" });
+  assert.deepEqual(parseHash("#edit"), { mode: "new" });
+  assert.deepEqual(parseHash("#edit/v1.abc"), { mode: "edit", payload: "v1.abc" });
+  assert.deepEqual(parseHash("#v1.abc"), { mode: "view", payload: "v1.abc" });
+  assert.equal(editHash("v1.abc"), "#edit/v1.abc");
+});
