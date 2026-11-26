@@ -41,12 +41,13 @@ function validate(o) {
   const s = o && o.s;
   const ok = o && o.v === VERSION && typeof o.t === 'string' && (o.f === 'kanji' || o.f === 'english')
     && Array.isArray(o.c) && o.c.length > 0
-    && o.c.every(c => Array.isArray(c) && typeof c[0] === 'string' && Number.isFinite(c[1]) && c[1] >= 0)
+    && o.c.every(c => Array.isArray(c) && typeof c[0] === 'string' && Number.isFinite(c[1]) && c[1] >= 0 && c[1] <= 5e6)
     && s && MODES.includes(s.mode) && DATE_RE.test(s.startDate)
     && Array.isArray(s.readingDays) && s.readingDays.length > 0
     && s.readingDays.every(d => Number.isInteger(d) && d >= 0 && d <= 6)
-    && [s.dailyTarget, s.chaptersPerWeek, s.maxOvershoot].every(Number.isFinite)
-    && s.dailyTarget > 0 && s.chaptersPerWeek > 0 && s.maxOvershoot >= 0;
+    && [s.dailyTarget, s.maxOvershoot].every(Number.isFinite)
+    && s.dailyTarget >= 500 && s.maxOvershoot >= 0
+    && Number.isInteger(s.chaptersPerWeek) && s.chaptersPerWeek >= 1 && s.chaptersPerWeek <= 1000;
   if (!ok) throw bad();
 }
 

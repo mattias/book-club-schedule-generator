@@ -53,7 +53,7 @@ test("per_week_chap: average divides by number of reading days", () => {
 
 test("per_week_char: warning when average exceeds the allowance", () => {
   const s = buildSchedule(mk([30000]), { ...base, mode: "per_week_char" });
-  assert.ok(s.weeks[0].warning.includes("1,300"));
+  assert.ok(s.weeks[0].warning.includes("800"));
 });
 
 test("per_week_char: fills weeks up to target+overshoot", () => {
@@ -82,4 +82,25 @@ test("paceForEndDate finishes on/before the target, one step lower does not", ()
 test("errors", () => {
   assert.throws(() => buildSchedule(mk([3000]), { ...base, readingDays: [] }), /no-reading-days/);
   assert.throws(() => buildSchedule([], base), /no-chapters/);
+});
+
+test("review: invalid pace settings and absurd chapter lengths throw bad-settings instead of hanging", () => {
+  for (const patch of [{ chaptersPerWeek: 0, mode: "per_week_chap" }, { chaptersPerWeek: -2, mode: "per_week_chap" }, { dailyTarget: 0 }, { dailyTarget: 1e-9, mode: "per_week_char" }, { dailyTarget: NaN }, { maxOvershoot: -1 }]) {
+    assert.throws(() => buildSchedule(mk([3000]), { ...base, ...patch }), /bad-settings/, JSON.stringify(patch));
+  }
+  assert.throws(() => buildSchedule(mk([1e12]), base), /bad-settings/);
+});
+
+test("review: per_week_char does not force the last chapter into an overfull week", () => {
+  const s = buildSchedule(mk([20000, 20000]), { ...base, mode: "per_week_char", readingDays: [1, 3, 5] });
+  assert.deepEqual(s.weeks.map(w => w.chapters.length), [1, 1]);
+});
+
+test("review: overshoot warning reports the excess over target+overshoot", () => {
+  const s = buildSchedule(mk([30000]), { ...base, mode: "per_week_char" });
+  assert.ok(s.weeks[0].warning.includes("800"), s.weeks[0].warning);
+});
+
+test("review: paceForEndDate returns null when the date cannot be reached", () => {
+  assert.equal(paceForEndDate(mk([3000, 3000]), { ...base, targetEndDate: "2026-11-01" }), null);
 });

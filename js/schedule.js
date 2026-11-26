@@ -5,6 +5,7 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const GROUP_EXTRA = 500;   // short chapters may group up to target + this
 const SLACK = 1000;        // leniency when deciding to drop a day
 const MAX_OVER = 1000;     // a shortened chapter may exceed target by at most this
+const MAX_CHAPTER = 5e6;      // sanity cap on one chapter
 const MIN_PER_DAY = 1000;  // never spread a chapter thinner than this
 
 const pad = n => String(n).padStart(2, '0');
@@ -96,7 +97,7 @@ function perWeekChar(chapters, s) {
     let total = 0;
     while (i < chapters.length) {
       const t = total + chapters[i].roundedLength;
-      if (total === 0 || t / perWeekDays <= allowance || i === chapters.length - 1) { chs.push(chapters[i]); total = t; i++; }
+      if (total === 0 || t / perWeekDays <= allowance) { chs.push(chapters[i]); total = t; i++; }
       else break;
     }
     const isLast = i >= chapters.length;
@@ -108,7 +109,7 @@ function perWeekChar(chapters, s) {
       else if (daysNeeded > perWeekDays) week.note = `+${daysNeeded - perWeekDays} extra days`;
     }
     if (week.avgPerDay > allowance) {
-      week.warning = `Average exceeds your set limit by ${(week.avgPerDay - s.dailyTarget).toLocaleString('en-US')} chars/day`;
+      week.warning = `Average exceeds your limit (target + overshoot) by ${(week.avgPerDay - allowance).toLocaleString('en-US')} chars/day`;
     }
     weeks.push(week);
     start = addDays(start, 7);
@@ -119,6 +120,11 @@ function perWeekChar(chapters, s) {
 export function buildSchedule(chapters, settings) {
   if (!settings.readingDays || settings.readingDays.length === 0) throw new Error('no-reading-days');
   if (!chapters || chapters.length === 0) throw new Error('no-chapters');
+  const bad = !Number.isFinite(settings.dailyTarget) || settings.dailyTarget < 500
+    || !Number.isInteger(settings.chaptersPerWeek) || settings.chaptersPerWeek < 1 || settings.chaptersPerWeek > 1000
+    || !Number.isFinite(settings.maxOvershoot) || settings.maxOvershoot < 0
+    || chapters.some(c => !Number.isFinite(c.roundedLength) || c.roundedLength > MAX_CHAPTER);
+  if (bad) throw new Error('bad-settings');
   const run = { per_day: perDay, per_week_chap: perWeekChap, per_week_char: perWeekChar }[settings.mode];
   const result = run(chapters, settings);
   return {
@@ -136,5 +142,5 @@ export function paceForEndDate(chapters, settings) {
     const s = buildSchedule(chapters, { ...settings, mode: 'per_day', dailyTarget: t });
     if (s.finishDate <= settings.targetEndDate) return t;
   }
-  return MAX;
+  return null; // cannot be reached
 }

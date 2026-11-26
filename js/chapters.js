@@ -4,6 +4,12 @@
 
 export function toKanji(num) {
   const basic = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  if (num >= 1000) return String(num);
+  if (num >= 100) {
+    const h = Math.floor(num / 100);
+    const rest = num % 100;
+    return (h === 1 ? '' : basic[h]) + '百' + (rest ? toKanji(rest) : '');
+  }
   if (num <= 10) return basic[num];
   if (num < 20) return '十' + basic[num % 10];
   if (num % 10 === 0) return basic[Math.floor(num / 10)] + '十';

@@ -39,3 +39,7 @@ test("chaptersFromList numbers, rounds and drops chapters under 100 chars", asyn
     { index: 2, title: "c", length: 1000, roundedLength: 1000 },
   ]);
 });
+
+test("review: toKanji handles 100-999", () => {
+  assert.deepEqual([100, 105, 110, 120, 150, 200, 999].map(toKanji), ["百", "百五", "百十", "百二十", "百五十", "二百", "九百九十九"]);
+});

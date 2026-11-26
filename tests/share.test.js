@@ -37,3 +37,12 @@ test("valid compression but wrong shape rejects", async () => {
   s.settings = { ...settings, readingDays: [] };
   await assert.rejects(async () => decodeState(await encodeState(s)), /bad-share-link/);
 });
+
+test("review: crafted links with absurd values are rejected", async () => {
+  for (const patch of [{ dailyTarget: 1e-9 }, { chaptersPerWeek: 0 }, { chaptersPerWeek: 1.5 }, { dailyTarget: 10 }]) {
+    const s = state([{ title: "x", length: 1000 }]);
+    s.settings = { ...settings, ...patch };
+    await assert.rejects(async () => decodeState(await encodeState(s)), /bad-share-link/, JSON.stringify(patch));
+  }
+  await assert.rejects(async () => decodeState(await encodeState(state([{ title: "x", length: 1e12 }]))), /bad-share-link/);
+});

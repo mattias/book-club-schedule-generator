@@ -28,6 +28,7 @@ const ERRORS = {
   'bad-epub': "That epub is missing its book description (container.xml / opf).",
   'bad-regex': 'That pattern is not a valid regular expression.',
   'no-reading-days': 'Pick at least one reading day.',
+  'bad-settings': 'Check the pace numbers: daily target at least 500, chapters per week 1-1000.',
   'no-chapters': 'Add some chapters first: paste a list or load an epub.',
   'bad-share-link': 'This share link is broken or from an unknown version. Starting fresh.',
 };
@@ -266,7 +267,10 @@ export function mountEditor(app, state, { notice } = {}) {
   const calcPace = h('button', { class: 'btn small', onclick: () => {
     try {
       if (!s.targetEndDate) return notify('Pick a finish date first.', 'error');
-      s.dailyTarget = paceForEndDate(chaptersFromList(state.chapters), s);
+      if (s.mode === 'per_week_chap') return notify('FINISH BY works with CHARS / DAY and CHARS / WEEK. For chapters per week, adjust the number of chapters.', 'error');
+      const pace = paceForEndDate(chaptersFromList(state.chapters), s);
+      if (pace === null) return notify(`${s.targetEndDate} cannot be reached from the start date with these chapters and reading days.`, 'error');
+      s.dailyTarget = pace;
       notify(`To finish by ${s.targetEndDate} you need about ${num(s.dailyTarget)} chars per reading day.`);
       dailyRefresh();
     } catch (e) { notify(errorText(e), 'error'); }
