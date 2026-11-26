@@ -153,28 +153,32 @@ export function mountEditor(app, state, { notice, onChange } = {}) {
   const summary = h('div', { 'aria-live': 'polite' });
   const tableHost = h('div');
   const detectHost = h('div');
-  const pasteTab = h('div');
-  const epubTab = h('div', { class: 'hidden' });
-  const tabBtns = [['paste', 'PASTE LIST'], ['epub', 'LOAD EPUB']].map(([id, label]) => h('button', {
-    class: 'btn ghost', 'aria-pressed': id === 'paste' ? 'true' : 'false', onclick: () => {
-      pasteTab.classList.toggle('hidden', id !== 'paste');
-      epubTab.classList.toggle('hidden', id !== 'epub');
-      tabBtns.forEach((b, i) => b.setAttribute('aria-pressed', String(['paste', 'epub'][i] === id)));
-    },
-  }, label));
-
+  let lastEpubTitle = '';
   const raw = h('textarea', { placeholder: '表紙\n0\nプロローグ\n252\n一章\n3900\n(last line: end of book count)', 'aria-label': 'Pasted chapter list', oninput: () => {
     state.chapters = parseCumulative(raw.value).map(c => ({ title: c.title, length: c.length }));
+    detectHost.replaceChildren();
+    setDropState(false);
     refreshBook();
   } });
-  pasteTab.append(h('p', { class: 'dim' }, 'One chapter per two lines: the title, then the cumulative character count where it starts. The final pair marks the end of the book.'), raw);
+  const pasteBox = h('details', {}, h('summary', {}, 'OR PASTE A LIST INSTEAD'),
+    h('p', { class: 'dim' }, 'One chapter per two lines: the title, then the cumulative character count where it starts. The final pair marks the end of the book.'), raw);
 
-  const fileInput = h('input', { type: 'file', accept: '.epub,application/epub+zip', id: 'epub-file', onchange: () => fileInput.files[0] && openEpub(fileInput.files[0]) });
-  const drop = h('label', { class: 'drop', for: 'epub-file', tabindex: '0', ondragover: e => { e.preventDefault(); drop.classList.add('over'); }, ondragleave: () => drop.classList.remove('over'),
-    ondrop: e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) openEpub(f); },
-    onkeydown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } } },
-    '▼ DROP AN .EPUB HERE OR CLICK TO CHOOSE ▼', h('br'), h('span', { class: 'dim' }, 'Read in your browser. Nothing is uploaded.'));
-  epubTab.append(fileInput, drop, detectHost);
+  const fileInput = h('input', { type: 'file', accept: '.epub,application/epub+zip', id: 'epub-file', 'aria-label': 'Choose an epub file', onchange: () => {
+    const f = fileInput.files[0];
+    fileInput.value = ''; // so the same file can be chosen again
+    if (f) openEpub(f);
+  } });
+  const dropText = h('div', { class: 'drop-text' });
+  const chooseBtn = h('button', { class: 'btn', type: 'button', onclick: () => fileInput.click() });
+  const drop = h('div', { class: 'drop', ondragover: e => { e.preventDefault(); drop.classList.add('over'); }, ondragleave: () => drop.classList.remove('over'),
+    ondrop: e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer.files[0]; if (f) openEpub(f); } },
+    fileInput, dropText, chooseBtn, h('div', { class: 'dim' }, 'Read in your browser. Nothing is uploaded.'));
+  function setDropState(loaded) {
+    drop.classList.toggle('compact', loaded);
+    dropText.textContent = loaded ? 'Drop another .epub here to replace this book' : '▼ DROP AN .EPUB HERE ▼';
+    chooseBtn.textContent = loaded ? 'REPLACE EPUB' : 'CHOOSE EPUB FILE';
+  }
+  setDropState(false);
 
   async function openEpub(file) {
     try {
@@ -182,7 +186,9 @@ export function mountEditor(app, state, { notice, onChange } = {}) {
       epub.detections = book.detections;
       epub.text = book.text;
       epub.active = 0;
-      if (!state.title && book.bookTitle) { state.title = book.bookTitle; titleInput.value = book.bookTitle; }
+      if (book.bookTitle && (!state.title || state.title === lastEpubTitle)) { state.title = book.bookTitle; titleInput.value = book.bookTitle; printTitle.textContent = book.bookTitle; }
+      lastEpubTitle = book.bookTitle;
+      setDropState(true);
       if (book.detections.length) applyDetection(0);
       else { state.chapters = []; refreshBook(); }
       renderDetect(`Loaded "${book.bookTitle || file.name}": ${num(book.totalChars)} characters.`);
@@ -295,7 +301,7 @@ export function mountEditor(app, state, { notice, onChange } = {}) {
   app.append(
     h('section', { class: 'box no-print' }, h('h2', {}, h('span', { class: 'step' }, '1'), 'BOOK'),
       h('label', { for: 'book-title' }, 'BOOK / CLUB NAME'), titleInput,
-      h('div', { class: 'tabs', style: 'margin-top:16px' }, tabBtns), pasteTab, epubTab, summary, tableHost),
+      h('div', { style: 'margin-top:16px' }, drop, detectHost, pasteBox), summary, tableHost),
     h('section', { class: 'box no-print' }, h('h2', {}, h('span', { class: 'step' }, '2'), 'PACE'),
       h('div', { class: 'row' }, modeBtns), modeHelp, modeFields,
       h('div', { class: 'grid' },
