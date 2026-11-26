@@ -1,0 +1,6 @@
+{
+  "name": "migaku-book-club-schedule-generator",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "deno test --allow-read tests/" }
+}
