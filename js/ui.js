@@ -111,6 +111,10 @@ function exportButtons(state, schedule, notify, withShare) {
     h('button', { class: 'btn cyan', onclick: () => download(`${title}.ics`, toIcs(schedule, { format: state.format, title }), 'text/calendar') }, '.ICS CALENDAR'),
   ];
   if (withShare) {
+    // Opens the same read-only view a share link would, without the copy-paste detour; browser Back returns to the editor.
+    buttons.splice(1, 0, h('button', { class: 'btn', onclick: async () => {
+      location.hash = await encodeState({ title: state.title, format: state.format, chapters: state.chapters, settings: state.settings });
+    } }, 'VIEW MODE'));
     buttons.unshift(h('button', { class: 'btn green', onclick: async () => {
       const payload = await encodeState({ title: state.title, format: state.format, chapters: state.chapters, settings: state.settings });
       const url = `${location.origin}${location.pathname}#${payload}`;
