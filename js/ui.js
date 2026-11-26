@@ -216,7 +216,8 @@ export function mountEditor(app, state, { notice } = {}) {
       } }, 'APPLY')));
   }
 
-  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. Tuesday Book Club', oninput: () => { state.title = titleInput.value; } });
+  const printTitle = h('h2', { class: 'print-title' }, state.title || 'Reading schedule');
+  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. Tuesday Book Club', oninput: () => { state.title = titleInput.value; printTitle.textContent = state.title || 'Reading schedule'; } });
 
   function refreshBook() {
     const n = chaptersFromList(state.chapters).length;
@@ -291,7 +292,7 @@ export function mountEditor(app, state, { notice } = {}) {
   }
 
   app.append(
-    h('section', { class: 'box' }, h('h2', {}, h('span', { class: 'step' }, '1'), 'BOOK'),
+    h('section', { class: 'box no-print' }, h('h2', {}, h('span', { class: 'step' }, '1'), 'BOOK'),
       h('label', { for: 'book-title' }, 'BOOK / CLUB NAME'), titleInput,
       h('div', { class: 'tabs', style: 'margin-top:16px' }, tabBtns), pasteTab, epubTab, summary, tableHost),
     h('section', { class: 'box no-print' }, h('h2', {}, h('span', { class: 'step' }, '2'), 'PACE'),
@@ -301,7 +302,7 @@ export function mountEditor(app, state, { notice } = {}) {
         h('div', {}, h('label', { for: 'f-format' }, 'CHAPTER NAMES'), formatSel),
         h('div', {}, h('label', { for: 'f-end' }, 'FINISH BY (OPTIONAL)'), endInput, calcPace)),
       h('div', { class: 'label' }, 'READING DAYS'), h('div', { class: 'row' }, dayBtns)),
-    h('section', { class: 'box' }, h('h2', {}, h('span', { class: 'step' }, '3'), 'SCHEDULE'), scheduleHost, noteBox));
+    h('section', { class: 'box' }, h('h2', { class: 'no-print' }, h('span', { class: 'step' }, '3'), 'SCHEDULE'), printTitle, scheduleHost, noteBox));
 
   renderModeFields();
   refreshBook();
