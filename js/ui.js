@@ -140,7 +140,7 @@ export function mountShared(app, state, { onRemix }) {
 
 /* ---------- editor ---------- */
 
-export function mountEditor(app, state, { notice } = {}) {
+export function mountEditor(app, state, { notice, onChange } = {}) {
   app.replaceChildren();
   const s = state.settings;
   const epub = { detections: [], text: '', active: 0 };
@@ -217,7 +217,7 @@ export function mountEditor(app, state, { notice } = {}) {
   }
 
   const printTitle = h('h2', { class: 'print-title' }, state.title || 'Reading schedule');
-  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. Tuesday Book Club', oninput: () => { state.title = titleInput.value; printTitle.textContent = state.title || 'Reading schedule'; } });
+  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. Tuesday Book Club', oninput: () => { state.title = titleInput.value; printTitle.textContent = state.title || 'Reading schedule'; onChange?.(state); } });
 
   function refreshBook() {
     const n = chaptersFromList(state.chapters).length;
@@ -263,7 +263,7 @@ export function mountEditor(app, state, { notice } = {}) {
     refreshSchedule();
   } }, name));
 
-  const endInput = h('input', { type: 'date', id: 'f-end', value: s.targetEndDate, oninput: () => { s.targetEndDate = endInput.value; } });
+  const endInput = h('input', { type: 'date', id: 'f-end', value: s.targetEndDate, oninput: () => { s.targetEndDate = endInput.value; onChange?.(state); } });
   const dailyRefresh = () => { renderModeFields(); refreshSchedule(); };
   const calcPace = h('button', { class: 'btn small', onclick: () => {
     try {
@@ -283,6 +283,7 @@ export function mountEditor(app, state, { notice } = {}) {
   /* panel 3: schedule */
   const scheduleHost = h('div');
   function refreshSchedule() {
+    onChange?.(state);
     const { schedule, error } = computeSchedule(state);
     if (error) {
       scheduleHost.replaceChildren(h('div', { class: 'msg' }, errorText(error)));
