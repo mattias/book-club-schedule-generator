@@ -191,7 +191,7 @@ export function mountEditor(app, state, { notice } = {}) {
     }
   }
 
-  const METHOD_NAMES = { toc: 'Table of contents', spine: 'One chapter per file', headings: 'Headings (h1-h3)', patterns: 'Title patterns (第N章, Chapter N...)' };
+  const METHOD_NAMES = { toc: 'Table of contents', spine: 'One chapter per file', headings: 'Headings (h1-h3)', patterns: 'Title patterns (第N章, Chapter N...)', numbers: 'Numbered sections (1, 2, 3 / Ⅰ, Ⅱ)' };
   function applyDetection(i) {
     epub.active = i;
     state.chapters = epub.detections[i].chapters.map(c => ({ ...c }));
