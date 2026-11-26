@@ -27,7 +27,7 @@ export function mountThemePicker(host) {
         h('i', { style: 'background:var(--cyan)' }), h('i', { style: 'background:var(--red)' }),
         h('i', { class: 'sample' }, 'Aa')))));
 
-  const dialog = h('dialog', { class: 'theme-dialog', 'aria-labelledby': 'theme-title', onclick: e => { if (e.target === dialog) dialog.close(); } },
+  const dialog = h('dialog', { class: 'modal-dialog', 'aria-labelledby': 'theme-title', onclick: e => { if (e.target === dialog) dialog.close(); } },
     h('div', { class: 'box' },
       h('h2', { id: 'theme-title' }, 'CHOOSE A THEME'),
       note,
