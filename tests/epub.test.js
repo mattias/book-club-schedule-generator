@@ -149,3 +149,18 @@ test("real-books: a lopsided detection is ranked after a balanced one", async ()
   const r = await loadEpub(makeEpub({ toc: "nav", files, tocEntries }));
   assert.deepEqual(methods(r), ["spine", "toc"]);
 });
+
+test("ranking: a detection with far more real chapters beats a coarse balanced one", async () => {
+  const sec = (from, to) => Array.from({ length: to - from + 1 }, (_, k) => p(String(from + k)) + p(A(1200))).join("");
+  const files = [{ href: "a.xhtml", html: sec(1, 3) }, { href: "b.xhtml", html: sec(4, 6) }];
+  const r = await loadEpub(makeEpub({ files }));
+  assert.deepEqual(methods(r), ["numbers", "spine"]);
+  assert.equal(r.detections[0].chapters.length, 6);
+});
+
+test("ranking: similar chapter counts keep the preference order", async () => {
+  const files = [1, 2, 3].map(i => ({ href: `c${i}.xhtml`, html: p(A(1500)) }));
+  const tocEntries = files.map((f, i) => ({ title: "T" + i, href: f.href }));
+  const r = await loadEpub(makeEpub({ toc: "nav", files, tocEntries }));
+  assert.deepEqual(methods(r), ["toc", "spine"]);
+});

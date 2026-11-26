@@ -291,5 +291,12 @@ export async function loadEpub(buffer) {
   };
   detections.sort((a, b) => Number(!balanced(a)) - Number(!balanced(b)));
 
+  // Among balanced ones, a detection with far more real chapters (>= 1000 chars) than the front-runner goes first
+  const real = d => d.chapters.filter(c => c.length >= 1000).length;
+  const group = detections.filter(balanced);
+  let best = group[0];
+  for (const d of group) if (real(d) >= 1.5 * real(best) && real(d) >= real(best) + 2) best = d;
+  if (best && best !== detections[0]) detections.splice(detections.indexOf(best), 1), detections.unshift(best);
+
   return { bookTitle, text, totalChars: charLen(text), units, detections };
 }
