@@ -8,7 +8,7 @@ The user writes Swedish in chat; the UI, code and docs are English.
 
 - No build step, no runtime dependencies, no server. Plain ES modules served as-is by Pages.
 - Epubs are read locally in the browser and never uploaded.
-- Schedule state lives in the URL hash only (no accounts, no server). The one exception is the theme choice, a personal display preference kept in `localStorage` (key `bcs-theme`); it is never part of a share link.
+- Schedule state lives in the URL hash only (no accounts, no server). Two local-only exceptions in `localStorage`, never part of a share link: the theme choice (`bcs-theme`) and the history of books/clubs (`bcs-history`, `js/history.js`: one entry per name holding the latest `v1.` payload, max 50, a rename replaces the old entry; `js/historyui.js` is the dialog).
 - Keep the plain-text export format `一章　タイトル 3. Dec-5. Dec (~3,600 chars)`; people paste it into chats.
 - Dates are local `YYYY-MM-DD` strings, never parsed through UTC.
 
