@@ -216,7 +216,7 @@ export function mountEditor(app, state, { notice } = {}) {
       } }, 'APPLY')));
   }
 
-  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. 君の膵臓をたべたい', oninput: () => { state.title = titleInput.value; } });
+  const titleInput = h('input', { type: 'text', id: 'book-title', value: state.title, placeholder: 'e.g. Tuesday Book Club', oninput: () => { state.title = titleInput.value; } });
 
   function refreshBook() {
     const n = chaptersFromList(state.chapters).length;
