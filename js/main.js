@@ -1,7 +1,9 @@
 import { decodeState, encodeState, parseHash, editHash } from './share.js';
 import { mountEditor, mountShared, defaultState, errorText } from './ui.js';
+import { mountThemePicker } from './themeui.js';
 
 const app = document.getElementById('app');
+mountThemePicker(document.getElementById('theme-host'));
 const baseUrl = () => location.pathname + location.search;
 
 /** Keep the URL in step with the editor so a reload (or a copied address) returns to exactly this state. */

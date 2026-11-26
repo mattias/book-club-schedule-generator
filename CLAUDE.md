@@ -8,13 +8,14 @@ The user writes Swedish in chat; the UI, code and docs are English.
 
 - No build step, no runtime dependencies, no server. Plain ES modules served as-is by Pages.
 - Epubs are read locally in the browser and never uploaded.
-- State lives in the URL hash only (no accounts, no storage).
+- Schedule state lives in the URL hash only (no accounts, no server). The one exception is the theme choice, a personal display preference kept in `localStorage` (key `bcs-theme`); it is never part of a share link.
 - Keep the plain-text export format `一章　タイトル 3. Dec-5. Dec (~3,600 chars)`; people paste it into chats.
 - Dates are local `YYYY-MM-DD` strings, never parsed through UTC.
 
 ## Layout
 
 - `index.html`, `css/8bit.css`, `fonts/DotGothic16-Regular.ttf` (OFL, bundled so it works offline).
+- `css/8bit.css` is the structure (all colours via custom properties); `css/themes.css` has one complete block per theme (`[data-theme="id"]`, same variables in every theme, enforced by `tests/theme.test.js`). `js/theme.js` is the theme list and storage, `js/themeui.js` the settings dialog. Adding a theme = a THEMES entry plus a themes.css block. Printing ignores themes.
 - `js/chapters.js` pasted-list parsing (`parseCumulative`), `chaptersFromList`, kanji/ch labels (`toKanji` handles 1-999).
 - `js/schedule.js` the three modes (`per_day`, `per_week_chap`, `per_week_char`), weekdays, `paceForEndDate`. Pure; throws `no-reading-days`, `no-chapters`, `bad-settings`.
 - `js/export.js` `toText`, `toIcs`.

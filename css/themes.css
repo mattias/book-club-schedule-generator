@@ -1,0 +1,156 @@
+/* Themes. Each theme sets the same custom properties (tests/theme.test.js checks this),
+   so a theme never inherits half its look from another one. The selector also matches
+   the preview cards in the theme picker, which carry their own data-theme.
+
+   --yellow / --green / --cyan are the three accents (primary, secondary, tertiary), used
+   both as text and as button backgrounds; --on-accent is the text colour on top of them. */
+
+/* ===== 8-BIT (default) ===== */
+:root, [data-theme="8bit"] {
+  --bg: #1a1c2c; --bg2: #202338; --panel: #29366f; --panel-bg: #29366f; --panel-dark: #1f2a57;
+  --ink: #f4f4f4; --dim: #94b0c2;
+  --yellow: #ffcd75; --green: #a7f070; --cyan: #41a6f6; --red: #ef7d57; --on-accent: #1a1c2c;
+  --yellow-edge: #b0702d; --green-edge: #4b9a2a; --cyan-edge: #2a5fa0;
+  --line: #000; --shadow: #000; --edge: #f4f4f4;
+  --btn-hover: #ffe0a3; --drop-over: #0f3a4f; --rule: #3b4a8f;
+  --finish-bg: #000; --finish-ink: #ffcd75; --finish-dim: #94b0c2;
+  --heading: #ffcd75; --h1-shadow: 4px 4px 0 #000; --h-weight: normal; --h-spacing: 2px;
+  --font: "DotGothic16", "MS Gothic", "Hiragino Kaku Gothic ProN", monospace;
+  --px: 4px; --radius: 0; --radius-sm: 0;
+  --btn-lift: 4px; --btn-outline: 4px; --btn-drop: 8px;
+  --box-shadow: 0 calc(-1 * var(--px)) 0 0 var(--edge), 0 var(--px) 0 0 var(--edge), calc(-1 * var(--px)) 0 0 0 var(--edge), var(--px) 0 0 0 var(--edge), 8px 12px 0 0 var(--shadow);
+  --bg-pattern: linear-gradient(45deg, var(--bg2) 25%, transparent 25%, transparent 75%, var(--bg2) 75%), linear-gradient(45deg, var(--bg2) 25%, transparent 25%, transparent 75%, var(--bg2) 75%);
+  --bg-size: 16px 16px; --bg-pos: 0 0, 8px 8px;
+}
+
+/* ===== BOOK LOVERS: parchment, ink and a burgundy spine ===== */
+[data-theme="book-lovers"] {
+  --bg: #f3e9d2; --bg2: #eadcbc; --panel: #fbf5e6; --panel-bg: #fbf5e6; --panel-dark: #f0e4c8;
+  --ink: #3b2a1e; --dim: #6f5a43;
+  --yellow: #8b2e2e; --green: #3f6b3a; --cyan: #2f5d7c; --red: #a8321f; --on-accent: #fbf5e6;
+  --yellow-edge: #5c1c1c; --green-edge: #274a24; --cyan-edge: #1d3e55;
+  --line: #3b2a1e; --shadow: rgba(59, 42, 30, 0.28); --edge: #8b6b4a;
+  --btn-hover: #a43c3c; --drop-over: #dfe8cf; --rule: #cdbb94;
+  --finish-bg: #3b2a1e; --finish-ink: #f3d98b; --finish-dim: #cdbb94;
+  --heading: #8b2e2e; --h1-shadow: 2px 2px 0 rgba(59, 42, 30, 0.2); --h-weight: bold; --h-spacing: 1px;
+  --font: Georgia, "Iowan Old Style", "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+  --px: 3px; --radius: 8px; --radius-sm: 4px;
+  --btn-lift: 3px; --btn-outline: 2px; --btn-drop: 5px;
+  --box-shadow: 0 0 0 3px var(--edge), 0 0 0 5px var(--panel-bg), 6px 9px 0 3px var(--shadow);
+  --bg-pattern: repeating-linear-gradient(0deg, transparent 0 27px, rgba(139, 46, 46, 0.09) 27px 28px);
+  --bg-size: auto; --bg-pos: 0 0;
+}
+
+/* ===== GAMERS: neon on black ===== */
+[data-theme="gamers"] {
+  --bg: #0a0a12; --bg2: #12121f; --panel: #14142a; --panel-bg: #14142a; --panel-dark: #0e0e20;
+  --ink: #e8f0ff; --dim: #8a9ac0;
+  --yellow: #ff2bd6; --green: #39ff88; --cyan: #00e5ff; --red: #ff5470; --on-accent: #0a0a12;
+  --yellow-edge: #8a0f73; --green-edge: #138a47; --cyan-edge: #007a8a;
+  --line: #000; --shadow: #000; --edge: #00e5ff;
+  --btn-hover: #ff7ae8; --drop-over: #06303a; --rule: #2a2a5a;
+  --finish-bg: #000; --finish-ink: #39ff88; --finish-dim: #8a9ac0;
+  --heading: #ff2bd6; --h1-shadow: 3px 3px 0 #00e5ff, 0 0 18px rgba(255, 43, 214, 0.55); --h-weight: normal; --h-spacing: 3px;
+  --font: "DotGothic16", "MS Gothic", "Hiragino Kaku Gothic ProN", monospace;
+  --px: 4px; --radius: 0; --radius-sm: 0;
+  --btn-lift: 4px; --btn-outline: 4px; --btn-drop: 8px;
+  --box-shadow: 0 0 0 var(--px) var(--edge), 0 0 22px 2px rgba(0, 229, 255, 0.45), 8px 12px 0 0 var(--shadow);
+  --bg-pattern: linear-gradient(rgba(0, 229, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.07) 1px, transparent 1px);
+  --bg-size: 32px 32px; --bg-pos: 0 0;
+}
+/* CRT scanlines over the page (not over the picker's cards) */
+html[data-theme="gamers"] body::before {
+  content: ""; position: fixed; inset: 0; z-index: 50; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+}
+
+/* ===== FINAL FANTASY: blue menu window, white frame, gold text ===== */
+[data-theme="final-fantasy"] {
+  --bg: #070a22; --bg2: #0c1236; --panel: #1b2f9c; --panel-bg: linear-gradient(180deg, #2c48cc 0%, #0e1a78 100%); --panel-dark: #101c80;
+  --ink: #ffffff; --dim: #aebcff;
+  --yellow: #f5d76e; --green: #8fe88f; --cyan: #7fc4ff; --red: #ff8a8a; --on-accent: #0b1030;
+  --yellow-edge: #9c7a1c; --green-edge: #3c8a3c; --cyan-edge: #2e6ca8;
+  --line: #0b1030; --shadow: rgba(0, 0, 0, 0.55); --edge: #f4f4ff;
+  --btn-hover: #ffe99a; --drop-over: #14307a; --rule: #4a5cc0;
+  --finish-bg: #060b40; --finish-ink: #f5d76e; --finish-dim: #aebcff;
+  --heading: #f5d76e; --h1-shadow: 2px 2px 0 #000; --h-weight: normal; --h-spacing: 3px;
+  --font: "DotGothic16", "MS Gothic", "Hiragino Kaku Gothic ProN", monospace;
+  --px: 3px; --radius: 10px; --radius-sm: 5px;
+  --btn-lift: 3px; --btn-outline: 2px; --btn-drop: 6px;
+  --box-shadow: 0 0 0 3px var(--edge), 0 0 0 6px #0b1030, 8px 11px 0 3px var(--shadow);
+  --bg-pattern: radial-gradient(1px 1px at 20px 30px, #fff, transparent), radial-gradient(1.5px 1.5px at 90px 70px, #cfe0ff, transparent), radial-gradient(1px 1px at 60px 105px, #fff, transparent), radial-gradient(1px 1px at 105px 12px, #9bb4ff, transparent);
+  --bg-size: 120px 120px; --bg-pos: 0 0;
+}
+
+/* ===== MIGAKU-INSPIRED: calm, modern, violet and rose on dark ===== */
+[data-theme="migaku-like"] {
+  --bg: #14111f; --bg2: #14111f; --panel: #1e1a30; --panel-bg: #1e1a30; --panel-dark: #181427;
+  --ink: #f2eefb; --dim: #a79fc2;
+  --yellow: #a78bfa; --green: #5eead4; --cyan: #f9a8d4; --red: #fb7185; --on-accent: #14111f;
+  --yellow-edge: #7b5fd6; --green-edge: #2fb5a0; --cyan-edge: #c4739f;
+  --line: #2e2848; --shadow: transparent; --edge: #2e2848;
+  --btn-hover: #c4b0ff; --drop-over: #231c45; --rule: #2e2848;
+  --finish-bg: #0f0c1a; --finish-ink: #c4b0ff; --finish-dim: #a79fc2;
+  --heading: #c4b0ff; --h1-shadow: none; --h-weight: bold; --h-spacing: 0;
+  --font: "Inter", "Segoe UI", system-ui, -apple-system, "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --px: 2px; --radius: 16px; --radius-sm: 10px;
+  --btn-lift: 3px; --btn-outline: 0px; --btn-drop: 0px;
+  --box-shadow: 0 0 0 1px var(--edge), 0 14px 34px rgba(0, 0, 0, 0.4);
+  --bg-pattern: radial-gradient(ellipse 60% 40% at 15% 0%, rgba(167, 139, 250, 0.16), transparent), radial-gradient(ellipse 50% 40% at 90% 10%, rgba(249, 168, 212, 0.1), transparent);
+  --bg-size: 100% 100%; --bg-pos: 0 0;
+}
+
+/* ===== GAME BOY: four shades of green ===== */
+[data-theme="gameboy"] {
+  --bg: #8bac0f; --bg2: #9bbc0f; --panel: #9bbc0f; --panel-bg: #9bbc0f; --panel-dark: #8bac0f;
+  --ink: #0f380f; --dim: #26501f;
+  --yellow: #0f380f; --green: #306230; --cyan: #0f380f; --red: #0f380f; --on-accent: #9bbc0f;
+  --yellow-edge: #0f380f; --green-edge: #0f380f; --cyan-edge: #0f380f;
+  --line: #0f380f; --shadow: #306230; --edge: #0f380f;
+  --btn-hover: #306230; --drop-over: #8bac0f; --rule: #306230;
+  --finish-bg: #0f380f; --finish-ink: #9bbc0f; --finish-dim: #8bac0f;
+  --heading: #0f380f; --h1-shadow: 3px 3px 0 #306230; --h-weight: normal; --h-spacing: 2px;
+  --font: "DotGothic16", "MS Gothic", "Hiragino Kaku Gothic ProN", monospace;
+  --px: 4px; --radius: 0; --radius-sm: 0;
+  --btn-lift: 4px; --btn-outline: 4px; --btn-drop: 8px;
+  --box-shadow: 0 calc(-1 * var(--px)) 0 0 var(--edge), 0 var(--px) 0 0 var(--edge), calc(-1 * var(--px)) 0 0 0 var(--edge), var(--px) 0 0 0 var(--edge), 8px 12px 0 0 var(--shadow);
+  --bg-pattern: linear-gradient(45deg, var(--bg2) 25%, transparent 25%, transparent 75%, var(--bg2) 75%), linear-gradient(45deg, var(--bg2) 25%, transparent 25%, transparent 75%, var(--bg2) 75%);
+  --bg-size: 16px 16px; --bg-pos: 0 0, 8px 8px;
+}
+
+/* ===== SAKURA: cherry-blossom pink on warm paper ===== */
+[data-theme="sakura"] {
+  --bg: #fdf0f3; --bg2: #fbdde5; --panel: #fffafb; --panel-bg: #fffafb; --panel-dark: #fdeef2;
+  --ink: #4a2c3a; --dim: #7d5566;
+  --yellow: #c2456b; --green: #4a7a4a; --cyan: #3e5c8a; --red: #b3261e; --on-accent: #fffafb;
+  --yellow-edge: #8a2a49; --green-edge: #2f5a2f; --cyan-edge: #28406a;
+  --line: #4a2c3a; --shadow: rgba(194, 69, 107, 0.2); --edge: #e08aa3;
+  --btn-hover: #d96b8c; --drop-over: #fde0e8; --rule: #f0c8d3;
+  --finish-bg: #4a2c3a; --finish-ink: #ffd0dc; --finish-dim: #e8b8c6;
+  --heading: #c2456b; --h1-shadow: 2px 2px 0 rgba(194, 69, 107, 0.2); --h-weight: bold; --h-spacing: 2px;
+  --font: "Hiragino Maru Gothic ProN", "Yu Gothic UI", "Segoe UI", system-ui, "Noto Sans JP", sans-serif;
+  --px: 3px; --radius: 14px; --radius-sm: 8px;
+  --btn-lift: 3px; --btn-outline: 2px; --btn-drop: 5px;
+  --box-shadow: 0 0 0 3px var(--edge), 6px 9px 0 3px var(--shadow);
+  --bg-pattern: radial-gradient(circle at 8px 8px, var(--bg2) 3px, transparent 4px), radial-gradient(circle at 24px 24px, var(--bg2) 2px, transparent 3px);
+  --bg-size: 32px 32px; --bg-pos: 0 0;
+}
+
+/* ===== TERMINAL: green phosphor ===== */
+[data-theme="terminal"] {
+  --bg: #050a05; --bg2: #070f08; --panel: #0a140a; --panel-bg: #0a140a; --panel-dark: #071007;
+  --ink: #b6ffb6; --dim: #55b055;
+  --yellow: #39ff6a; --green: #b4ff6a; --cyan: #2ee6a6; --red: #ff6b5a; --on-accent: #031003;
+  --yellow-edge: #167a32; --green-edge: #6aa83a; --cyan-edge: #148a66;
+  --line: #0a3d17; --shadow: transparent; --edge: #1f9a3f;
+  --btn-hover: #7dffa0; --drop-over: #0c2a14; --rule: #124a1f;
+  --finish-bg: #000; --finish-ink: #39ff6a; --finish-dim: #55b055;
+  --heading: #39ff6a; --h1-shadow: 0 0 12px rgba(57, 255, 106, 0.6); --h-weight: normal; --h-spacing: 1px;
+  --font: "Cascadia Mono", Consolas, "Courier New", "DotGothic16", "MS Gothic", monospace;
+  --px: 2px; --radius: 0; --radius-sm: 0;
+  --btn-lift: 2px; --btn-outline: 2px; --btn-drop: 0px;
+  --box-shadow: 0 0 0 2px var(--edge), 0 0 16px rgba(57, 255, 106, 0.25);
+  --bg-pattern: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px);
+  --bg-size: auto; --bg-pos: 0 0;
+}
+[data-theme="terminal"] h2::before { content: "> "; }

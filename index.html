@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Club - Reading Schedule</title>
     <link rel="preload" href="fonts/DotGothic16-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/8bit.css">
+    <script>try{var t=localStorage.getItem('bcs-theme');if(t&&/^[a-z0-9-]+$/.test(t))document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
     <div class="wrap">
-        <h1>★ BOOK CLUB SCHEDULE ★</h1>
+        <div class="topbar">
+            <h1>★ BOOK CLUB SCHEDULE ★</h1>
+            <div id="theme-host" class="no-print"></div>
+        </div>
         <p class="tagline no-print">Set a reading pace, share one link, everyone stays in step.</p>
         <div id="app"></div>
         <footer class="no-print">Everything runs in your browser. Books are never uploaded. Share links contain the whole schedule.</footer>
