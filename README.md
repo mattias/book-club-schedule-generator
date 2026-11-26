@@ -14,12 +14,13 @@ The whole schedule (titles, chapter lengths, settings) is compressed into the UR
 
 ### Epub chapter detection
 
-Epubs are read in your browser; nothing is uploaded. Chapters are proposed in this order, and you can switch between the ones that were found:
+Epubs are read in your browser; nothing is uploaded. Chapters are proposed in this order (the most balanced result is shown first), and you can switch between the ones that were found. Front and back matter such as 表紙, 目次 and 奥付 is left out:
 
 1. Table of contents (nav or NCX)
 2. One chapter per file in the reading order
 3. Headings (h1-h3)
 4. Title patterns (第N章, Chapter N, プロローグ ...)
+5. Numbered sections: lines that are just 1, 2, 3 (also １, 一, Ⅰ)
 
 If none fit, split at lines matching your own regular expression, then rename, merge or remove chapters in the chapter list. Ruby readings and whitespace are not counted.
 

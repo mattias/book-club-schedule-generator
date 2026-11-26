@@ -104,3 +104,48 @@ test("a book with a single flat file yields no detections, not an error", async 
   assert.deepEqual(r.detections, []);
   assert.equal(r.totalChars, 100);
 });
+
+test("real-books: bare numeral lines (１, ２, Ⅰ, Ⅱ) split into numbered sections", async () => {
+  const html = p("１") + p(A(400)) + p("２") + p(A(600)) + p("３") + p(A(200));
+  const r = await loadEpub(makeEpub({ files: [{ href: "a.xhtml", html }] }));
+  assert.deepEqual(methods(r), ["numbers"]);
+  assert.deepEqual(r.detections[0].chapters, [{ title: "１", length: 401 }, { title: "２", length: 601 }, { title: "３", length: 201 }]);
+  const roman = p("Ⅰ") + p(A(300)) + p("Ⅱ") + p(A(300));
+  const r2 = await loadEpub(makeEpub({ files: [{ href: "a.xhtml", html: roman }] }));
+  assert.deepEqual(r2.detections[0].chapters.map(c => c.title), ["Ⅰ", "Ⅱ"]);
+});
+
+test("real-books: numbered sections ignore a stray early list (tiny segments are pruned)", async () => {
+  const html = p("１") + p("２") + p(A(300)) + p("１") + p(A(400)) + p("２") + p(A(500)) + p("３") + p(A(200));
+  const r = await loadEpub(makeEpub({ files: [{ href: "a.xhtml", html }] }));
+  assert.deepEqual(r.detections[0].chapters.map(c => c.length), [401, 501, 201]);
+});
+
+test("real-books: title patterns inside a contents page do not create tiny chapters", async () => {
+  const html = p("第一章") + p("第二章") + p("第一章") + p(A(400)) + p("第二章") + p(A(500));
+  const r = await loadEpub(makeEpub({ files: [{ href: "a.xhtml", html }] }));
+  assert.deepEqual(r.detections[0].chapters.map(c => c.length), [403, 503]);
+});
+
+test("real-books: front/back matter TOC entries and object-replacement chars are cleaned", async () => {
+  const files = [
+    { href: "cover.xhtml", html: p(A(150)) }, { href: "c1.xhtml", html: p(A(500)) },
+    { href: "c2.xhtml", html: p(A(800)) }, { href: "end.xhtml", html: p(A(250)) },
+  ];
+  const tocEntries = [{ title: "表紙", href: "cover.xhtml" }, { title: "￼ 一", href: "c1.xhtml" }, { title: "二", href: "c2.xhtml" }, { title: "奥付", href: "end.xhtml" }];
+  const r = await loadEpub(makeEpub({ toc: "nav", files, tocEntries }));
+  assert.deepEqual(r.detections[0].chapters, [{ title: "一", length: 500 }, { title: "二", length: 800 }]);
+});
+
+test("real-books: tiny spine files are not offered as chapters", async () => {
+  const files = [{ href: "t.xhtml", html: p(A(10)) }, { href: "a.xhtml", html: p(A(500)) }, { href: "b.xhtml", html: p(A(400)) }];
+  const r = await loadEpub(makeEpub({ files }));
+  assert.deepEqual(r.detections.find(d => d.method === "spine").chapters.map(c => c.length), [500, 400]);
+});
+
+test("real-books: a lopsided detection is ranked after a balanced one", async () => {
+  const files = [1, 2, 3, 4].map(i => ({ href: `c${i}.xhtml`, html: p(A(1500)) }));
+  const tocEntries = [{ title: "A", href: "c1.xhtml" }, { title: "B", href: "c4.xhtml" }];
+  const r = await loadEpub(makeEpub({ toc: "nav", files, tocEntries }));
+  assert.deepEqual(methods(r), ["spine", "toc"]);
+});
